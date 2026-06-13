@@ -3,16 +3,16 @@ import { useParams, useLocation, Link } from "wouter";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { z } from "zod";
-import { useCreateResume, useGetResume, useUpdateResume, getListResumesQueryKey } from "@workspace/api-client-react";
+import { useCreateResume, useGetResume, useUpdateResume, getListResumesQueryKey, getGetResumeQueryKey } from "@workspace/api-client-react";
 import { useQueryClient } from "@tanstack/react-query";
 import { toast } from "sonner";
 import { Button } from "@/components/ui/button";
 import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage, FormDescription } from "@/components/ui/form";
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Switch } from "@/components/ui/switch";
 import { ArrowLeft, Loader2 } from "lucide-react";
+import { motion } from "framer-motion";
 
 const formSchema = z.object({
   name: z.string().min(1, "Name is required"),
@@ -30,7 +30,7 @@ export default function ResumeForm({ isNew = false }: { isNew?: boolean }) {
   const queryClient = useQueryClient();
 
   const { data: resume, isLoading: isFetching } = useGetResume(Number(id), {
-    query: { enabled: !isNew && !!id }
+    query: { enabled: !isNew && !!id, queryKey: getGetResumeQueryKey(Number(id)) }
   });
 
   const form = useForm<FormValues>({
@@ -89,93 +89,96 @@ export default function ResumeForm({ isNew = false }: { isNew?: boolean }) {
   const isPending = createMutation.isPending || updateMutation.isPending;
 
   if (!isNew && isFetching) {
-    return <div className="flex justify-center p-8"><Loader2 className="h-8 w-8 animate-spin text-muted-foreground" /></div>;
+    return (
+      <div className="flex justify-center items-center h-40">
+        <div className="w-6 h-6 rounded-full border-2 border-primary border-t-transparent animate-spin" />
+      </div>
+    );
   }
 
   return (
-    <div className="max-w-3xl mx-auto space-y-6">
+    <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} className="max-w-3xl mx-auto space-y-6 pb-8">
       <div className="flex items-center gap-4">
-        <Button variant="ghost" size="icon" asChild>
+        <Button variant="ghost" size="icon" asChild className="text-muted-foreground hover:text-white hover:bg-white/10 rounded-xl">
           <Link href="/resumes">
             <ArrowLeft className="h-4 w-4" />
           </Link>
         </Button>
         <div>
-          <h1 className="text-3xl font-bold tracking-tight">{isNew ? "Add Resume" : "Edit Resume"}</h1>
+          <h1 className="text-3xl font-bold tracking-tight bg-gradient-to-r from-white to-white/60 bg-clip-text text-transparent">
+            {isNew ? "Add Resume" : "Edit Resume"}
+          </h1>
+          <p className="text-muted-foreground mt-1 text-sm">{isNew ? "Add a new version to your resume library." : "Update this resume version."}</p>
         </div>
       </div>
 
-      <Card>
-        <CardHeader>
-          <CardTitle>Resume Details</CardTitle>
-        </CardHeader>
-        <CardContent>
-          <Form {...form}>
-            <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-6">
-              <div className="grid md:grid-cols-2 gap-6">
-                <FormField control={form.control} name="name" render={({ field }) => (
-                  <FormItem>
-                    <FormLabel>Version Name</FormLabel>
-                    <FormControl><Input placeholder="Frontend Dev 2024" {...field} /></FormControl>
-                    <FormMessage />
-                  </FormItem>
-                )} />
-                <FormField control={form.control} name="category" render={({ field }) => (
-                  <FormItem>
-                    <FormLabel>Category / Role</FormLabel>
-                    <FormControl><Input placeholder="Software Engineering" {...field} /></FormControl>
-                    <FormMessage />
-                  </FormItem>
-                )} />
-                <FormField control={form.control} name="fileUrl" render={({ field }) => (
-                  <FormItem className="md:col-span-2">
-                    <FormLabel>External Link (Optional)</FormLabel>
-                    <FormControl><Input placeholder="https://docs.google.com/..." {...field} /></FormControl>
-                    <FormDescription>Link to your hosted PDF or document.</FormDescription>
-                    <FormMessage />
-                  </FormItem>
-                )} />
-                <FormField control={form.control} name="content" render={({ field }) => (
-                  <FormItem className="md:col-span-2">
-                    <FormLabel>Resume Text Content</FormLabel>
-                    <FormControl>
-                      <Textarea 
-                        placeholder="Paste your plain text resume here for AI analysis..." 
-                        className="min-h-[300px] font-mono text-sm" 
-                        {...field} 
-                      />
-                    </FormControl>
-                    <FormDescription>Required if you want to use the AI Analyzer features.</FormDescription>
-                    <FormMessage />
-                  </FormItem>
-                )} />
-                <FormField control={form.control} name="isDefault" render={({ field }) => (
-                  <FormItem className="flex flex-row items-center justify-between rounded-lg border p-4 md:col-span-2">
-                    <div className="space-y-0.5">
-                      <FormLabel className="text-base">Set as Default</FormLabel>
-                      <FormDescription>
-                        Make this your primary resume for general applications.
-                      </FormDescription>
-                    </div>
-                    <FormControl>
-                      <Switch checked={field.value} onCheckedChange={field.onChange} />
-                    </FormControl>
-                  </FormItem>
-                )} />
-              </div>
-              <div className="flex justify-end gap-4">
-                <Button type="button" variant="outline" asChild>
-                  <Link href="/resumes">Cancel</Link>
-                </Button>
-                <Button type="submit" disabled={isPending}>
-                  {isPending && <Loader2 className="mr-2 h-4 w-4 animate-spin" />}
-                  {isNew ? "Save Resume" : "Update Resume"}
-                </Button>
-              </div>
-            </form>
-          </Form>
-        </CardContent>
-      </Card>
-    </div>
+      <div className="glass-panel rounded-2xl p-6">
+        <Form {...form}>
+          <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-6">
+            <div className="grid md:grid-cols-2 gap-5">
+              <FormField control={form.control} name="name" render={({ field }) => (
+                <FormItem>
+                  <FormLabel className="text-white/80">Version Name</FormLabel>
+                  <FormControl><Input placeholder="Frontend Dev 2024" className="bg-black/30 border-white/10 text-white placeholder:text-muted-foreground/50 focus-visible:ring-primary/50" data-testid="input-name" {...field} /></FormControl>
+                  <FormMessage />
+                </FormItem>
+              )} />
+              <FormField control={form.control} name="category" render={({ field }) => (
+                <FormItem>
+                  <FormLabel className="text-white/80">Category / Role</FormLabel>
+                  <FormControl><Input placeholder="Software Engineering" className="bg-black/30 border-white/10 text-white placeholder:text-muted-foreground/50 focus-visible:ring-primary/50" data-testid="input-category" {...field} /></FormControl>
+                  <FormMessage />
+                </FormItem>
+              )} />
+              <FormField control={form.control} name="fileUrl" render={({ field }) => (
+                <FormItem className="md:col-span-2">
+                  <FormLabel className="text-white/80">External Link <span className="text-muted-foreground font-normal">(optional)</span></FormLabel>
+                  <FormControl><Input placeholder="https://docs.google.com/..." className="bg-black/30 border-white/10 text-white placeholder:text-muted-foreground/50 focus-visible:ring-primary/50" data-testid="input-file-url" {...field} /></FormControl>
+                  <FormDescription className="text-muted-foreground/70">Link to your hosted PDF or document.</FormDescription>
+                  <FormMessage />
+                </FormItem>
+              )} />
+              <FormField control={form.control} name="content" render={({ field }) => (
+                <FormItem className="md:col-span-2">
+                  <FormLabel className="text-white/80">Resume Text Content</FormLabel>
+                  <FormControl>
+                    <Textarea
+                      placeholder="Paste your plain text resume here for AI analysis..."
+                      className="min-h-[280px] font-mono text-sm bg-black/30 border-white/10 text-white placeholder:text-muted-foreground/50 resize-none focus-visible:ring-primary/50"
+                      data-testid="input-content"
+                      {...field}
+                    />
+                  </FormControl>
+                  <FormDescription className="text-muted-foreground/70">Required for AI Analyzer and Cover Letter Generator features.</FormDescription>
+                  <FormMessage />
+                </FormItem>
+              )} />
+              <FormField control={form.control} name="isDefault" render={({ field }) => (
+                <FormItem className="md:col-span-2 flex flex-row items-center justify-between rounded-xl border border-white/5 bg-white/5 p-4">
+                  <div className="space-y-0.5">
+                    <FormLabel className="text-white font-medium">Set as Default</FormLabel>
+                    <FormDescription className="text-muted-foreground/70 text-xs">
+                      Make this your primary resume for general applications.
+                    </FormDescription>
+                  </div>
+                  <FormControl>
+                    <Switch checked={field.value} onCheckedChange={field.onChange} data-testid="switch-is-default" />
+                  </FormControl>
+                </FormItem>
+              )} />
+            </div>
+            <div className="flex justify-end gap-3 pt-2">
+              <Button type="button" variant="ghost" asChild className="text-muted-foreground hover:text-white hover:bg-white/5">
+                <Link href="/resumes">Cancel</Link>
+              </Button>
+              <Button type="submit" disabled={isPending} className="bg-primary hover:bg-primary/90 shadow-[0_0_20px_rgba(124,58,237,0.3)]" data-testid="button-submit">
+                {isPending && <Loader2 className="mr-2 h-4 w-4 animate-spin" />}
+                {isNew ? "Save Resume" : "Update Resume"}
+              </Button>
+            </div>
+          </form>
+        </Form>
+      </div>
+    </motion.div>
   );
 }

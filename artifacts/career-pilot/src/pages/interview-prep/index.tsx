@@ -9,12 +9,12 @@ import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
 import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from "@/components/ui/form";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
-import { Card, CardContent, CardFooter, CardHeader, CardTitle } from "@/components/ui/card";
 import { Dialog, DialogContent, DialogDescription, DialogFooter, DialogHeader, DialogTitle } from "@/components/ui/dialog";
 import { AlertDialog, AlertDialogAction, AlertDialogCancel, AlertDialogContent, AlertDialogDescription, AlertDialogFooter, AlertDialogHeader, AlertDialogTitle } from "@/components/ui/alert-dialog";
 import { Badge } from "@/components/ui/badge";
 import { Plus, Edit, Trash, BookOpen } from "lucide-react";
 import { toast } from "sonner";
+import { motion } from "framer-motion";
 
 const questionSchema = z.object({
   question: z.string().min(1, "Question is required"),
@@ -26,9 +26,24 @@ const questionSchema = z.object({
 type QuestionFormValues = z.infer<typeof questionSchema>;
 
 const DIFFICULTY_COLORS = {
-  easy: "bg-emerald-500/10 text-emerald-500 hover:bg-emerald-500/20",
-  medium: "bg-amber-500/10 text-amber-500 hover:bg-amber-500/20",
-  hard: "bg-red-500/10 text-red-500 hover:bg-red-500/20",
+  easy: "bg-emerald-500/10 text-emerald-400 border-emerald-500/20",
+  medium: "bg-amber-500/10 text-amber-400 border-amber-500/20",
+  hard: "bg-red-500/10 text-red-400 border-red-500/20",
+};
+
+const CATEGORY_COLORS: Record<string, string> = {
+  behavioral: "bg-blue-500/10 text-blue-400 border-blue-500/20",
+  technical: "bg-purple-500/10 text-purple-400 border-purple-500/20",
+  general: "bg-slate-500/10 text-slate-400 border-slate-500/20",
+};
+
+const container = {
+  hidden: { opacity: 0 },
+  show: { opacity: 1, transition: { staggerChildren: 0.06 } }
+};
+const item = {
+  hidden: { opacity: 0, y: 20 },
+  show: { opacity: 1, y: 0, transition: { type: "spring" as const, stiffness: 300, damping: 24 } }
 };
 
 export default function InterviewPrep() {
@@ -37,7 +52,7 @@ export default function InterviewPrep() {
   const { data: questions, isLoading } = useListInterviewQuestions({
     category: filterCategory !== "all" ? filterCategory : undefined
   });
-  
+
   const [isDialogOpen, setIsDialogOpen] = useState(false);
   const [editingId, setEditingId] = useState<number | null>(null);
   const [deleteId, setDeleteId] = useState<number | null>(null);
@@ -47,7 +62,7 @@ export default function InterviewPrep() {
     defaultValues: {
       question: "",
       answer: "",
-      category: InterviewQuestionCategory.general,
+      category: InterviewQuestionCategory.behavioral,
       difficulty: InterviewQuestionDifficulty.medium,
     },
   });
@@ -77,7 +92,7 @@ export default function InterviewPrep() {
   const deleteMutation = useDeleteInterviewQuestion({
     mutation: {
       onSuccess: () => {
-        toast.success("Question deleted");
+        toast.success("Question removed");
         queryClient.invalidateQueries({ queryKey: getListInterviewQuestionsQueryKey() });
         setDeleteId(null);
       },
@@ -106,103 +121,126 @@ export default function InterviewPrep() {
 
   function openNew() {
     setEditingId(null);
-    form.reset({
-      question: "", answer: "", category: InterviewQuestionCategory.behavioral, difficulty: InterviewQuestionDifficulty.medium,
-    });
+    form.reset({ question: "", answer: "", category: InterviewQuestionCategory.behavioral, difficulty: InterviewQuestionDifficulty.medium });
     setIsDialogOpen(true);
   }
 
+  const filterTabs = ["all", ...Object.values(InterviewQuestionCategory)];
+
   return (
-    <div className="space-y-6">
-      <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">
+    <motion.div variants={container} initial="hidden" animate="show" className="space-y-6 pb-8">
+      <motion.div variants={item} className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">
         <div>
-          <h1 className="text-3xl font-bold tracking-tight">Interview Prep</h1>
-          <p className="text-muted-foreground mt-2">Practice and organize your interview answers.</p>
+          <h1 className="text-3xl font-bold tracking-tight bg-gradient-to-r from-white to-white/60 bg-clip-text text-transparent">Interview Prep</h1>
+          <p className="text-muted-foreground mt-2">Build your answer bank and master every question.</p>
         </div>
-        <Button onClick={openNew}>
+        <Button onClick={openNew} className="bg-primary hover:bg-primary/90 shadow-[0_0_20px_rgba(124,58,237,0.3)]" data-testid="button-add-question">
           <Plus className="mr-2 h-4 w-4" />
           Add Question
         </Button>
-      </div>
+      </motion.div>
 
-      <div className="flex gap-2 pb-4 overflow-x-auto">
-        <Button variant={filterCategory === "all" ? "default" : "outline"} onClick={() => setFilterCategory("all")} className="rounded-full">All</Button>
-        {Object.values(InterviewQuestionCategory).map((cat) => (
-          <Button 
-            key={cat} 
-            variant={filterCategory === cat ? "default" : "outline"} 
-            onClick={() => setFilterCategory(cat)} 
-            className="rounded-full capitalize"
+      <motion.div variants={item} className="flex gap-2 flex-wrap">
+        {filterTabs.map((cat) => (
+          <button
+            key={cat}
+            onClick={() => setFilterCategory(cat)}
+            data-testid={`filter-${cat}`}
+            className={`px-4 py-1.5 rounded-full text-sm font-medium transition-all duration-200 capitalize ${
+              filterCategory === cat
+                ? "bg-primary text-white shadow-[0_0_12px_rgba(124,58,237,0.4)]"
+                : "bg-white/5 text-muted-foreground hover:bg-white/10 hover:text-white border border-white/10"
+            }`}
           >
             {cat.replace("_", " ")}
-          </Button>
+          </button>
         ))}
-      </div>
+      </motion.div>
 
       {isLoading ? (
-        <div className="flex justify-center p-12">Loading questions...</div>
+        <div className="flex justify-center items-center h-40 gap-2 text-muted-foreground">
+          <div className="w-5 h-5 rounded-full border-2 border-primary border-t-transparent animate-spin" />
+          Loading questions...
+        </div>
       ) : questions?.length === 0 ? (
-        <Card className="text-center py-12">
-          <CardContent>
-            <BookOpen className="h-12 w-12 mx-auto text-muted-foreground mb-4" />
-            <h3 className="text-xl font-bold">No questions found</h3>
-            <p className="text-muted-foreground mt-2 mb-6">Add common interview questions to start practicing.</p>
-            <Button onClick={openNew}>Add Question</Button>
-          </CardContent>
-        </Card>
+        <motion.div variants={item} className="glass-panel rounded-2xl py-16 text-center">
+          <BookOpen className="h-12 w-12 mx-auto text-primary/40 mb-4" />
+          <h3 className="text-xl font-semibold text-white">No questions found</h3>
+          <p className="text-muted-foreground mt-2 mb-6 max-w-xs mx-auto">Build your answer library to nail every interview.</p>
+          <Button onClick={openNew} className="bg-primary hover:bg-primary/90">Add First Question</Button>
+        </motion.div>
       ) : (
         <div className="grid gap-4 md:grid-cols-2">
-          {questions?.map((q) => (
-            <Card key={q.id} className="flex flex-col">
-              <CardHeader className="pb-3 flex-row items-start justify-between gap-4 space-y-0">
-                <CardTitle className="text-lg leading-tight">{q.question}</CardTitle>
-                <Badge variant="secondary" className="shrink-0 capitalize">{q.category.replace("_", " ")}</Badge>
-              </CardHeader>
-              <CardContent className="flex-1">
-                <div className="text-sm text-muted-foreground whitespace-pre-wrap font-mono bg-muted/30 p-4 rounded-md h-full">
-                  {q.answer || "No answer drafted yet."}
+          {questions?.map((q, i) => (
+            <motion.div
+              key={q.id}
+              data-testid={`card-question-${q.id}`}
+              initial={{ opacity: 0, y: 20 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ delay: i * 0.05, type: "spring", stiffness: 300, damping: 24 }}
+              className="glass-panel rounded-2xl flex flex-col hover:border-white/10 transition-all duration-300 group"
+            >
+              <div className="p-5 pb-3 flex items-start justify-between gap-3">
+                <p className="font-medium text-white leading-snug flex-1">{q.question}</p>
+                <Badge variant="outline" className={`shrink-0 capitalize text-xs font-medium ${CATEGORY_COLORS[q.category] || ""}`}>
+                  {q.category.replace("_", " ")}
+                </Badge>
+              </div>
+
+              <div className="px-5 py-3 flex-1">
+                <div className="text-sm text-muted-foreground whitespace-pre-wrap font-mono bg-black/20 p-4 rounded-xl border border-white/5 min-h-[80px]">
+                  {q.answer || <span className="italic opacity-50">No answer drafted yet. Click edit to add your response.</span>}
                 </div>
-              </CardContent>
-              <CardFooter className="pt-4 border-t flex justify-between items-center">
-                {q.difficulty && (
-                  <Badge variant="outline" className={`capitalize border-transparent ${DIFFICULTY_COLORS[q.difficulty as keyof typeof DIFFICULTY_COLORS]}`}>
+              </div>
+
+              <div className="px-5 py-3 border-t border-white/5 flex justify-between items-center">
+                {q.difficulty ? (
+                  <Badge variant="outline" className={`capitalize text-xs ${DIFFICULTY_COLORS[q.difficulty as keyof typeof DIFFICULTY_COLORS]}`}>
                     {q.difficulty}
                   </Badge>
-                )}
-                <div className="flex gap-2 ml-auto">
-                  <Button variant="ghost" size="icon" onClick={() => openEdit(q)}>
-                    <Edit className="h-4 w-4" />
+                ) : <div />}
+                <div className="flex gap-1.5">
+                  <Button variant="ghost" size="icon" onClick={() => openEdit(q)} className="h-8 w-8 text-muted-foreground hover:text-white hover:bg-white/10" data-testid={`button-edit-question-${q.id}`}>
+                    <Edit className="h-3.5 w-3.5" />
                   </Button>
-                  <Button variant="ghost" size="icon" className="text-destructive hover:text-destructive hover:bg-destructive/10" onClick={() => setDeleteId(q.id)}>
-                    <Trash className="h-4 w-4" />
+                  <Button variant="ghost" size="icon" onClick={() => setDeleteId(q.id)} className="h-8 w-8 text-muted-foreground hover:text-red-400 hover:bg-red-400/10" data-testid={`button-delete-question-${q.id}`}>
+                    <Trash className="h-3.5 w-3.5" />
                   </Button>
                 </div>
-              </CardFooter>
-            </Card>
+              </div>
+            </motion.div>
           ))}
         </div>
       )}
 
       <Dialog open={isDialogOpen} onOpenChange={setIsDialogOpen}>
-        <DialogContent className="sm:max-w-[600px]">
+        <DialogContent className="sm:max-w-[600px] bg-card/95 backdrop-blur-xl border-white/10">
           <DialogHeader>
-            <DialogTitle>{editingId ? "Edit Question" : "Add Question"}</DialogTitle>
-            <DialogDescription>Draft your answer using the STAR method.</DialogDescription>
+            <DialogTitle className="text-white text-xl">{editingId ? "Edit Question" : "Add Question"}</DialogTitle>
+            <DialogDescription className="text-muted-foreground">Draft your answer using the STAR method: Situation, Task, Action, Result.</DialogDescription>
           </DialogHeader>
           <Form {...form}>
             <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-4">
               <FormField control={form.control} name="question" render={({ field }) => (
-                <FormItem><FormLabel>Question</FormLabel><FormControl><Input placeholder="Tell me about a time..." {...field} /></FormControl><FormMessage /></FormItem>
+                <FormItem>
+                  <FormLabel className="text-white/80">Question</FormLabel>
+                  <FormControl><Input placeholder="Tell me about a time..." className="bg-black/30 border-white/10 text-white" data-testid="input-question" {...field} /></FormControl>
+                  <FormMessage />
+                </FormItem>
               )} />
               <div className="grid grid-cols-2 gap-4">
                 <FormField control={form.control} name="category" render={({ field }) => (
                   <FormItem>
-                    <FormLabel>Category</FormLabel>
+                    <FormLabel className="text-white/80">Category</FormLabel>
                     <Select onValueChange={field.onChange} defaultValue={field.value}>
-                      <FormControl><SelectTrigger><SelectValue placeholder="Select category" /></SelectTrigger></FormControl>
-                      <SelectContent>
+                      <FormControl>
+                        <SelectTrigger className="bg-black/30 border-white/10 text-white">
+                          <SelectValue placeholder="Select category" />
+                        </SelectTrigger>
+                      </FormControl>
+                      <SelectContent className="bg-card/95 backdrop-blur-xl border-white/10">
                         {Object.values(InterviewQuestionCategory).map((cat) => (
-                          <SelectItem key={cat} value={cat} className="capitalize">{cat.replace("_", " ")}</SelectItem>
+                          <SelectItem key={cat} value={cat} className="capitalize hover:bg-white/10 focus:bg-white/10">{cat.replace("_", " ")}</SelectItem>
                         ))}
                       </SelectContent>
                     </Select>
@@ -211,12 +249,16 @@ export default function InterviewPrep() {
                 )} />
                 <FormField control={form.control} name="difficulty" render={({ field }) => (
                   <FormItem>
-                    <FormLabel>Difficulty</FormLabel>
+                    <FormLabel className="text-white/80">Difficulty</FormLabel>
                     <Select onValueChange={field.onChange} defaultValue={field.value}>
-                      <FormControl><SelectTrigger><SelectValue placeholder="Select difficulty" /></SelectTrigger></FormControl>
-                      <SelectContent>
+                      <FormControl>
+                        <SelectTrigger className="bg-black/30 border-white/10 text-white">
+                          <SelectValue placeholder="Select difficulty" />
+                        </SelectTrigger>
+                      </FormControl>
+                      <SelectContent className="bg-card/95 backdrop-blur-xl border-white/10">
                         {Object.values(InterviewQuestionDifficulty).map((diff) => (
-                          <SelectItem key={diff} value={diff} className="capitalize">{diff}</SelectItem>
+                          <SelectItem key={diff} value={diff} className="capitalize hover:bg-white/10 focus:bg-white/10">{diff}</SelectItem>
                         ))}
                       </SelectContent>
                     </Select>
@@ -226,13 +268,24 @@ export default function InterviewPrep() {
               </div>
               <FormField control={form.control} name="answer" render={({ field }) => (
                 <FormItem>
-                  <FormLabel>Your Answer (STAR Method)</FormLabel>
-                  <FormControl><Textarea placeholder="Situation, Task, Action, Result..." className="min-h-[200px]" {...field} /></FormControl>
+                  <FormLabel className="text-white/80">Your Answer</FormLabel>
+                  <FormControl>
+                    <Textarea
+                      placeholder="Situation: ... Task: ... Action: ... Result: ..."
+                      className="min-h-[180px] bg-black/30 border-white/10 text-white font-mono text-sm"
+                      data-testid="input-answer"
+                      {...field}
+                    />
+                  </FormControl>
                   <FormMessage />
                 </FormItem>
               )} />
               <DialogFooter>
-                <Button type="submit" disabled={createMutation.isPending || updateMutation.isPending}>Save</Button>
+                <Button type="button" variant="ghost" onClick={() => setIsDialogOpen(false)} className="text-muted-foreground hover:text-white hover:bg-white/5">Cancel</Button>
+                <Button type="submit" disabled={createMutation.isPending || updateMutation.isPending} data-testid="button-save-question" className="bg-primary hover:bg-primary/90">
+                  {(createMutation.isPending || updateMutation.isPending) && <div className="mr-2 h-3 w-3 rounded-full border-2 border-white border-t-transparent animate-spin" />}
+                  Save
+                </Button>
               </DialogFooter>
             </form>
           </Form>
@@ -240,19 +293,19 @@ export default function InterviewPrep() {
       </Dialog>
 
       <AlertDialog open={!!deleteId} onOpenChange={(open) => !open && setDeleteId(null)}>
-        <AlertDialogContent>
+        <AlertDialogContent className="bg-card/95 backdrop-blur-xl border-white/10">
           <AlertDialogHeader>
-            <AlertDialogTitle>Delete Question</AlertDialogTitle>
-            <AlertDialogDescription>Are you sure you want to delete this question? This action cannot be undone.</AlertDialogDescription>
+            <AlertDialogTitle className="text-white">Delete Question</AlertDialogTitle>
+            <AlertDialogDescription className="text-muted-foreground">This will permanently delete this question and any answers you&apos;ve drafted.</AlertDialogDescription>
           </AlertDialogHeader>
           <AlertDialogFooter>
-            <AlertDialogCancel>Cancel</AlertDialogCancel>
-            <AlertDialogAction onClick={() => deleteId && deleteMutation.mutate({ id: deleteId })} className="bg-destructive text-destructive-foreground hover:bg-destructive/90">
+            <AlertDialogCancel className="bg-transparent border-white/10 text-white hover:bg-white/5">Cancel</AlertDialogCancel>
+            <AlertDialogAction onClick={() => deleteId && deleteMutation.mutate({ id: deleteId })} className="bg-red-500/20 text-red-400 hover:bg-red-500/30 border border-red-500/20">
               Delete
             </AlertDialogAction>
           </AlertDialogFooter>
         </AlertDialogContent>
       </AlertDialog>
-    </div>
+    </motion.div>
   );
 }
