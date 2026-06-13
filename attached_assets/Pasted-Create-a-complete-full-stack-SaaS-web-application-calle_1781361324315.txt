@@ -1,0 +1,133 @@
+Create a complete full-stack SaaS web application called **CareerPilot AI**.
+
+Purpose:
+CareerPilot AI helps students and job seekers manage job applications, resumes, interviews, recruiters, and career preparation from a single dashboard.
+
+Requirements:
+
+Frontend:
+
+* Next.js 15
+* TypeScript
+* Tailwind CSS
+* Modern SaaS UI
+* Responsive design
+* Dark theme
+* Professional dashboard similar to Linear, Vercel, Notion, and Stripe
+
+Authentication:
+
+* Clerk Authentication
+* Sign Up
+* Login
+* Protected Dashboard
+
+Core Features:
+
+1. Dashboard
+
+* Total Applications
+* Interviews
+* Rejections
+* Offers
+* Success Rate
+* Recent Activity
+* Analytics Charts
+
+2. Job Application Tracker
+
+* Add/Edit/Delete Applications
+* Company Name
+* Role
+* Location
+* Salary
+* Date Applied
+* Status
+* Notes
+
+Statuses:
+
+* Wishlist
+* Applied
+* OA Received
+* Interview Scheduled
+* Final Round
+* Offer
+* Rejected
+
+3. Resume Manager
+
+* Upload Resume
+* Multiple Resume Versions
+* Resume Preview
+* Resume Categories
+
+4. AI Resume Analyzer
+
+* ATS Score
+* Resume Feedback
+* Missing Keywords
+* Skill Gap Analysis
+* Resume Improvement Suggestions
+
+5. AI Cover Letter Generator
+
+* Input Job Description
+* Generate Personalized Cover Letter
+* Copy and Download
+
+6. Recruiter CRM
+
+* Recruiter Name
+* Company
+* Email
+* LinkedIn Profile
+* Notes
+* Follow-up Reminders
+
+7. Interview Preparation Hub
+
+* Behavioral Questions
+* Technical Questions
+* Preparation Notes
+* Interview Checklist
+
+8. Analytics
+
+* Monthly Application Trends
+* Interview Conversion Rate
+* Offer Conversion Rate
+* Company Statistics
+* Interactive Charts
+
+Database:
+
+* PostgreSQL
+* Prisma ORM
+
+AI:
+
+* OpenAI API Integration
+
+Project Requirements:
+
+* Clean folder structure
+* Reusable components
+* Production-ready code
+* API routes
+* Loading states
+* Error handling
+* Form validation
+* Modern UI components
+* Sample seed data
+
+Generate:
+
+* Complete application code
+* Database schema
+* API routes
+* Dashboard UI
+* Setup instructions
+* Environment variables template
+
+The final result should look like a startup-grade SaaS platform that can be showcased on a software engineering resume and portfolio.

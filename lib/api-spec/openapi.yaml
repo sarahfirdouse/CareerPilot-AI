@@ -3,13 +3,24 @@ info:
   # Do not change the title, if the title changes, the import paths will be broken
   title: Api
   version: 0.1.0
-  description: API specification
+  description: CareerPilot AI API specification
 servers:
   - url: /api
     description: Base API path
 tags:
   - name: health
     description: Health operations
+  - name: applications
+    description: Job application operations
+  - name: recruiters
+    description: Recruiter CRM operations
+  - name: resumes
+    description: Resume manager operations
+  - name: interviewPrep
+    description: Interview preparation operations
+  - name: dashboard
+    description: Dashboard and analytics operations
+
 paths:
   /healthz:
     get:
@@ -24,6 +35,479 @@ paths:
             application/json:
               schema:
                 $ref: "#/components/schemas/HealthStatus"
+
+  # ─── Job Applications ────────────────────────────────────────────────────────
+  /applications:
+    get:
+      operationId: listApplications
+      tags: [applications]
+      summary: List all job applications for the authenticated user
+      parameters:
+        - name: status
+          in: query
+          required: false
+          schema:
+            type: string
+        - name: search
+          in: query
+          required: false
+          schema:
+            type: string
+      responses:
+        "200":
+          description: List of applications
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: "#/components/schemas/Application"
+    post:
+      operationId: createApplication
+      tags: [applications]
+      summary: Create a new job application
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/ApplicationInput"
+      responses:
+        "201":
+          description: Created
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Application"
+
+  /applications/{id}:
+    get:
+      operationId: getApplication
+      tags: [applications]
+      summary: Get a specific application
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: integer
+      responses:
+        "200":
+          description: Application
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Application"
+        "404":
+          description: Not found
+    patch:
+      operationId: updateApplication
+      tags: [applications]
+      summary: Update an application
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: integer
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/ApplicationUpdate"
+      responses:
+        "200":
+          description: Updated application
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Application"
+        "404":
+          description: Not found
+    delete:
+      operationId: deleteApplication
+      tags: [applications]
+      summary: Delete an application
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: integer
+      responses:
+        "204":
+          description: Deleted
+        "404":
+          description: Not found
+
+  # ─── Recruiters ──────────────────────────────────────────────────────────────
+  /recruiters:
+    get:
+      operationId: listRecruiters
+      tags: [recruiters]
+      summary: List all recruiters for the authenticated user
+      responses:
+        "200":
+          description: List of recruiters
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: "#/components/schemas/Recruiter"
+    post:
+      operationId: createRecruiter
+      tags: [recruiters]
+      summary: Create a new recruiter contact
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/RecruiterInput"
+      responses:
+        "201":
+          description: Created
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Recruiter"
+
+  /recruiters/{id}:
+    get:
+      operationId: getRecruiter
+      tags: [recruiters]
+      summary: Get a specific recruiter
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: integer
+      responses:
+        "200":
+          description: Recruiter
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Recruiter"
+        "404":
+          description: Not found
+    patch:
+      operationId: updateRecruiter
+      tags: [recruiters]
+      summary: Update a recruiter
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: integer
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/RecruiterUpdate"
+      responses:
+        "200":
+          description: Updated recruiter
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Recruiter"
+        "404":
+          description: Not found
+    delete:
+      operationId: deleteRecruiter
+      tags: [recruiters]
+      summary: Delete a recruiter
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: integer
+      responses:
+        "204":
+          description: Deleted
+        "404":
+          description: Not found
+
+  # ─── Resumes ─────────────────────────────────────────────────────────────────
+  /resumes:
+    get:
+      operationId: listResumes
+      tags: [resumes]
+      summary: List all resumes for the authenticated user
+      responses:
+        "200":
+          description: List of resumes
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: "#/components/schemas/Resume"
+    post:
+      operationId: createResume
+      tags: [resumes]
+      summary: Create a new resume entry
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/ResumeInput"
+      responses:
+        "201":
+          description: Created
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Resume"
+
+  /resumes/{id}:
+    get:
+      operationId: getResume
+      tags: [resumes]
+      summary: Get a specific resume
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: integer
+      responses:
+        "200":
+          description: Resume
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Resume"
+        "404":
+          description: Not found
+    patch:
+      operationId: updateResume
+      tags: [resumes]
+      summary: Update a resume
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: integer
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/ResumeUpdate"
+      responses:
+        "200":
+          description: Updated resume
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Resume"
+        "404":
+          description: Not found
+    delete:
+      operationId: deleteResume
+      tags: [resumes]
+      summary: Delete a resume
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: integer
+      responses:
+        "204":
+          description: Deleted
+        "404":
+          description: Not found
+
+  # ─── Interview Prep ───────────────────────────────────────────────────────────
+  /interview-questions:
+    get:
+      operationId: listInterviewQuestions
+      tags: [interviewPrep]
+      summary: List interview questions
+      parameters:
+        - name: category
+          in: query
+          required: false
+          schema:
+            type: string
+      responses:
+        "200":
+          description: List of interview questions
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: "#/components/schemas/InterviewQuestion"
+    post:
+      operationId: createInterviewQuestion
+      tags: [interviewPrep]
+      summary: Create an interview question/note
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/InterviewQuestionInput"
+      responses:
+        "201":
+          description: Created
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/InterviewQuestion"
+
+  /interview-questions/{id}:
+    patch:
+      operationId: updateInterviewQuestion
+      tags: [interviewPrep]
+      summary: Update an interview question
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: integer
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/InterviewQuestionUpdate"
+      responses:
+        "200":
+          description: Updated
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/InterviewQuestion"
+        "404":
+          description: Not found
+    delete:
+      operationId: deleteInterviewQuestion
+      tags: [interviewPrep]
+      summary: Delete an interview question
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: integer
+      responses:
+        "204":
+          description: Deleted
+        "404":
+          description: Not found
+
+  # ─── AI Endpoints ─────────────────────────────────────────────────────────────
+  /ai/analyze-resume:
+    post:
+      operationId: analyzeResume
+      tags: [resumes]
+      summary: AI analysis of resume text
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/ResumeAnalysisInput"
+      responses:
+        "200":
+          description: Analysis result
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ResumeAnalysisResult"
+
+  /ai/generate-cover-letter:
+    post:
+      operationId: generateCoverLetter
+      tags: [applications]
+      summary: Generate an AI cover letter
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/CoverLetterInput"
+      responses:
+        "200":
+          description: Generated cover letter
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/CoverLetterResult"
+
+  # ─── Dashboard / Analytics (wow endpoints) ────────────────────────────────────
+  /dashboard/stats:
+    get:
+      operationId: getDashboardStats
+      tags: [dashboard]
+      summary: Get dashboard stats for the current user
+      responses:
+        "200":
+          description: Dashboard statistics
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/DashboardStats"
+
+  /dashboard/activity:
+    get:
+      operationId: getRecentActivity
+      tags: [dashboard]
+      summary: Get recent activity feed
+      responses:
+        "200":
+          description: Recent activity
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: "#/components/schemas/ActivityItem"
+
+  /dashboard/monthly-trend:
+    get:
+      operationId: getMonthlyTrend
+      tags: [dashboard]
+      summary: Get monthly application trend for the past 6 months
+      responses:
+        "200":
+          description: Monthly trend data
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: "#/components/schemas/MonthlyTrendItem"
+
+  /dashboard/status-breakdown:
+    get:
+      operationId: getStatusBreakdown
+      tags: [dashboard]
+      summary: Get application counts grouped by status
+      responses:
+        "200":
+          description: Status breakdown
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: "#/components/schemas/StatusBreakdownItem"
+
 components:
   schemas:
     HealthStatus:
@@ -34,3 +518,245 @@ components:
       required:
         - status
 
+    # ── Application ──────────────────────────────────────────────────────────────
+    Application:
+      type: object
+      required: [id, userId, company, role, status, appliedDate, createdAt, updatedAt]
+      properties:
+        id:          { type: integer }
+        userId:      { type: string }
+        company:     { type: string }
+        role:        { type: string }
+        location:    { type: ["string", "null"] }
+        salary:      { type: ["string", "null"] }
+        appliedDate: { type: string, format: date }
+        status:
+          type: string
+          enum: [wishlist, applied, oa_received, interview_scheduled, final_round, offer, rejected]
+        notes:       { type: ["string", "null"] }
+        jobUrl:      { type: ["string", "null"] }
+        createdAt:   { type: string, format: date-time }
+        updatedAt:   { type: string, format: date-time }
+
+    ApplicationInput:
+      type: object
+      required: [company, role, appliedDate, status]
+      properties:
+        company:     { type: string, minLength: 1 }
+        role:        { type: string, minLength: 1 }
+        location:    { type: string }
+        salary:      { type: string }
+        appliedDate: { type: string, format: date }
+        status:
+          type: string
+          enum: [wishlist, applied, oa_received, interview_scheduled, final_round, offer, rejected]
+        notes:       { type: string }
+        jobUrl:      { type: string }
+
+    ApplicationUpdate:
+      type: object
+      properties:
+        company:     { type: string, minLength: 1 }
+        role:        { type: string, minLength: 1 }
+        location:    { type: string }
+        salary:      { type: string }
+        appliedDate: { type: string, format: date }
+        status:
+          type: string
+          enum: [wishlist, applied, oa_received, interview_scheduled, final_round, offer, rejected]
+        notes:       { type: string }
+        jobUrl:      { type: string }
+
+    # ── Recruiter ─────────────────────────────────────────────────────────────────
+    Recruiter:
+      type: object
+      required: [id, userId, name, company, createdAt, updatedAt]
+      properties:
+        id:             { type: integer }
+        userId:         { type: string }
+        name:           { type: string }
+        company:        { type: string }
+        email:          { type: ["string", "null"] }
+        linkedin:       { type: ["string", "null"] }
+        phone:          { type: ["string", "null"] }
+        notes:          { type: ["string", "null"] }
+        followUpDate:   { type: ["string", "null"], format: date }
+        createdAt:      { type: string, format: date-time }
+        updatedAt:      { type: string, format: date-time }
+
+    RecruiterInput:
+      type: object
+      required: [name, company]
+      properties:
+        name:           { type: string, minLength: 1 }
+        company:        { type: string, minLength: 1 }
+        email:          { type: string }
+        linkedin:       { type: string }
+        phone:          { type: string }
+        notes:          { type: string }
+        followUpDate:   { type: string, format: date }
+
+    RecruiterUpdate:
+      type: object
+      properties:
+        name:           { type: string, minLength: 1 }
+        company:        { type: string, minLength: 1 }
+        email:          { type: string }
+        linkedin:       { type: string }
+        phone:          { type: string }
+        notes:          { type: string }
+        followUpDate:   { type: string, format: date }
+
+    # ── Resume ────────────────────────────────────────────────────────────────────
+    Resume:
+      type: object
+      required: [id, userId, name, category, createdAt, updatedAt]
+      properties:
+        id:        { type: integer }
+        userId:    { type: string }
+        name:      { type: string }
+        category:  { type: string }
+        content:   { type: ["string", "null"] }
+        fileUrl:   { type: ["string", "null"] }
+        isDefault: { type: boolean }
+        createdAt: { type: string, format: date-time }
+        updatedAt: { type: string, format: date-time }
+
+    ResumeInput:
+      type: object
+      required: [name, category]
+      properties:
+        name:      { type: string, minLength: 1 }
+        category:  { type: string, minLength: 1 }
+        content:   { type: string }
+        fileUrl:   { type: string }
+        isDefault: { type: boolean }
+
+    ResumeUpdate:
+      type: object
+      properties:
+        name:      { type: string, minLength: 1 }
+        category:  { type: string, minLength: 1 }
+        content:   { type: string }
+        fileUrl:   { type: string }
+        isDefault: { type: boolean }
+
+    # ── Interview Question ─────────────────────────────────────────────────────────
+    InterviewQuestion:
+      type: object
+      required: [id, userId, question, category, createdAt, updatedAt]
+      properties:
+        id:        { type: integer }
+        userId:    { type: string }
+        question:  { type: string }
+        answer:    { type: ["string", "null"] }
+        category:
+          type: string
+          enum: [behavioral, technical, company_specific, general]
+        difficulty:
+          type: string
+          enum: [easy, medium, hard]
+        createdAt: { type: string, format: date-time }
+        updatedAt: { type: string, format: date-time }
+
+    InterviewQuestionInput:
+      type: object
+      required: [question, category]
+      properties:
+        question:   { type: string, minLength: 1 }
+        answer:     { type: string }
+        category:
+          type: string
+          enum: [behavioral, technical, company_specific, general]
+        difficulty:
+          type: string
+          enum: [easy, medium, hard]
+
+    InterviewQuestionUpdate:
+      type: object
+      properties:
+        question:   { type: string, minLength: 1 }
+        answer:     { type: string }
+        category:
+          type: string
+          enum: [behavioral, technical, company_specific, general]
+        difficulty:
+          type: string
+          enum: [easy, medium, hard]
+
+    # ── AI ─────────────────────────────────────────────────────────────────────────
+    ResumeAnalysisInput:
+      type: object
+      required: [resumeText, jobDescription]
+      properties:
+        resumeText:     { type: string }
+        jobDescription: { type: string }
+
+    ResumeAnalysisResult:
+      type: object
+      required: [atsScore, feedback, missingKeywords, skillGaps, suggestions]
+      properties:
+        atsScore:        { type: integer }
+        feedback:        { type: string }
+        missingKeywords:
+          type: array
+          items: { type: string }
+        skillGaps:
+          type: array
+          items: { type: string }
+        suggestions:
+          type: array
+          items: { type: string }
+
+    CoverLetterInput:
+      type: object
+      required: [jobDescription, resumeText, companyName, role]
+      properties:
+        jobDescription: { type: string }
+        resumeText:     { type: string }
+        companyName:    { type: string }
+        role:           { type: string }
+
+    CoverLetterResult:
+      type: object
+      required: [coverLetter]
+      properties:
+        coverLetter: { type: string }
+
+    # ── Dashboard ──────────────────────────────────────────────────────────────────
+    DashboardStats:
+      type: object
+      required: [totalApplications, interviews, offers, rejections, successRate, activeApplications]
+      properties:
+        totalApplications: { type: integer }
+        interviews:        { type: integer }
+        offers:            { type: integer }
+        rejections:        { type: integer }
+        successRate:       { type: number }
+        activeApplications: { type: integer }
+
+    ActivityItem:
+      type: object
+      required: [id, type, description, entityId, entityType, createdAt]
+      properties:
+        id:          { type: integer }
+        type:        { type: string }
+        description: { type: string }
+        entityId:    { type: integer }
+        entityType:  { type: string }
+        createdAt:   { type: string, format: date-time }
+
+    MonthlyTrendItem:
+      type: object
+      required: [month, year, count]
+      properties:
+        month: { type: string }
+        year:  { type: integer }
+        count: { type: integer }
+
+    StatusBreakdownItem:
+      type: object
+      required: [status, count]
+      properties:
+        status: { type: string }
+        count:  { type: integer }
