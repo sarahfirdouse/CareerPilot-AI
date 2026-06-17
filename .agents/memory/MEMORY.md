@@ -1,0 +1,3 @@
+- [Mobile sidebar pattern](mobile-sidebar.md) — hamburger + AnimatePresence drawer; close on location useEffect + onClick; shared NavContent component avoids duplication
+- [Hooks-in-map pattern](hooks-in-map.md) — useCountUp called inside .map() is technically a hooks violation but works when array is always static size; typecheck passes but React strict mode may warn
+- [Glass-panel consistency](glass-panel-rule.md) — never use shadcn Card component for analytics/data panels; always use glass-panel divs directly like other pages

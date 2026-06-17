@@ -219,7 +219,7 @@ export default function Dashboard() {
             <div className="relative">
               <ProductivityRing value={87} />
               <div className="absolute inset-0 flex items-center justify-center">
-                <span className="text-sm font-bold text-white rotate-90">87%</span>
+                <span className="text-sm font-bold text-white">87%</span>
               </div>
             </div>
             <div>
