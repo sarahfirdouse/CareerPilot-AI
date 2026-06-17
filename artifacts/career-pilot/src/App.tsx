@@ -20,6 +20,7 @@ import RecruitersList from "./pages/recruiters";
 import InterviewPrep from "./pages/interview-prep";
 import Analytics from "./pages/analytics";
 import CoverLetter from "./pages/cover-letter";
+import SettingsPage from "./pages/settings";
 import NotFound from "./pages/not-found";
 import AppLayout from "./components/layout/app-layout";
 
@@ -177,6 +178,7 @@ function ClerkProviderWithRoutes() {
           <Route path="/interview-prep"><ProtectedRoute component={InterviewPrep} /></Route>
           <Route path="/analytics"><ProtectedRoute component={Analytics} /></Route>
           <Route path="/cover-letter"><ProtectedRoute component={CoverLetter} /></Route>
+          <Route path="/settings"><ProtectedRoute component={SettingsPage} /></Route>
           
           <Route component={NotFound} />
         </Switch>

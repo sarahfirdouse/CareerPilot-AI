@@ -3,7 +3,7 @@ import { Link, useLocation } from "wouter";
 import { useClerk } from "@clerk/react";
 import {
   LayoutDashboard, Briefcase, FileText, Users, GraduationCap,
-  BarChart, LogOut, PenTool, Menu, X,
+  BarChart, LogOut, PenTool, Menu, X, Settings,
 } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { Button } from "@/components/ui/button";
@@ -65,7 +65,26 @@ function NavContent({ onNavigate }: { onNavigate?: () => void }) {
         })}
       </nav>
 
-      <div className="p-4 border-t border-white/5 mt-auto shrink-0">
+      <div className="p-4 border-t border-white/5 mt-auto shrink-0 space-y-1">
+        {(() => {
+          const isActive = location === "/settings";
+          return (
+            <Link href="/settings" onClick={onNavigate}
+              className={cn(
+                "relative flex items-center gap-3 px-3 py-2.5 rounded-xl text-sm font-medium transition-all duration-200 group",
+                isActive ? "text-white" : "text-muted-foreground hover:text-white"
+              )}>
+              {isActive && (
+                <motion.div layoutId="sidebar-active-indicator"
+                  className="absolute inset-0 bg-white/10 rounded-xl border border-white/8"
+                  transition={{ type: "spring" as const, stiffness: 300, damping: 30 }} />
+              )}
+              <Settings className={cn("h-4 w-4 relative z-10 shrink-0 transition-colors", isActive ? "text-primary" : "text-muted-foreground group-hover:text-white/80")} />
+              <span className="relative z-10">Settings</span>
+              {isActive && <div className="ml-auto w-1.5 h-1.5 rounded-full bg-primary relative z-10 shrink-0" />}
+            </Link>
+          );
+        })()}
         <Button
           variant="ghost"
           className="w-full justify-start gap-3 text-muted-foreground hover:text-white hover:bg-white/5 rounded-xl h-10"
