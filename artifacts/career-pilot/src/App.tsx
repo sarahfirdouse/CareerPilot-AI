@@ -8,6 +8,7 @@ import { queryClient } from "./lib/queryClient";
 import { Toaster } from "@/components/ui/sonner";
 import { TooltipProvider } from "@/components/ui/tooltip";
 import { ThemeProvider } from "./components/theme-provider";
+import { ErrorBoundary } from "./components/error-boundary";
 
 import LandingPage from "./pages/landing";
 import Dashboard from "./pages/dashboard";
@@ -172,8 +173,9 @@ function ClerkProviderWithRoutes() {
           <Route path="/applications/:id"><ProtectedRoute component={ApplicationForm} /></Route>
           <Route path="/resumes"><ProtectedRoute component={ResumesList} /></Route>
           <Route path="/resumes/new"><ProtectedRoute component={() => <ResumeForm isNew />} /></Route>
-          <Route path="/resumes/:id"><ProtectedRoute component={ResumeForm} /></Route>
+          {/* /resumes/analyze MUST come before /resumes/:id to avoid "analyze" matching as an id */}
           <Route path="/resumes/analyze"><ProtectedRoute component={ResumeAnalyze} /></Route>
+          <Route path="/resumes/:id"><ProtectedRoute component={ResumeForm} /></Route>
           <Route path="/recruiters"><ProtectedRoute component={RecruitersList} /></Route>
           <Route path="/interview-prep"><ProtectedRoute component={InterviewPrep} /></Route>
           <Route path="/analytics"><ProtectedRoute component={Analytics} /></Route>
@@ -192,7 +194,9 @@ function App() {
     <ThemeProvider defaultTheme="dark" storageKey="career-pilot-theme">
       <WouterRouter base={basePath}>
         <TooltipProvider>
-          <ClerkProviderWithRoutes />
+          <ErrorBoundary>
+            <ClerkProviderWithRoutes />
+          </ErrorBoundary>
           <Toaster position="bottom-right" />
         </TooltipProvider>
       </WouterRouter>

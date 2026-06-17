@@ -729,6 +729,14 @@ export default function ResumesList() {
             </div>
           )}
 
+          {/* Demo indicator */}
+          {!isLoading && realResumes.length === 0 && (
+            <div className="flex items-center gap-2.5 p-3 bg-primary/6 border border-primary/20 rounded-xl">
+              <Sparkles className="w-3.5 h-3.5 text-primary shrink-0" aria-hidden="true" />
+              <p className="text-xs text-muted-foreground">Sample analysis — <Link href="/resumes/new" className="text-primary hover:underline">upload your resume</Link> for real insights</p>
+            </div>
+          )}
+
           {/* Sample resumes */}
           <div className="space-y-2">
             {SAMPLE_RESUMES.map(r => (

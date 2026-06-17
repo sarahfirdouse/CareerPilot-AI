@@ -447,6 +447,7 @@ export default function RecruitersList() {
     setEditingId(null); form.reset({ name: "", company: "", email: "", linkedin: "", phone: "", notes: "", followUpDate: "" }); setIsDialogOpen(true);
   }
 
+  const isDemo = !isLoading && realRecruiters.length === 0;
   const filtered = filterStatus === "all" ? SAMPLE_RECRUITERS : SAMPLE_RECRUITERS.filter(r => r.status === filterStatus);
   const selectedRecruiter = SAMPLE_RECRUITERS.find(r => r.id === selectedId) ?? SAMPLE_RECRUITERS[3];
 
@@ -473,6 +474,22 @@ export default function RecruitersList() {
           <Plus className="w-4 h-4" />Add Contact
         </Button>
       </div>
+
+      {/* Demo banner */}
+      {isDemo && (
+        <div className="flex flex-col sm:flex-row items-start sm:items-center gap-3 p-4 bg-primary/6 border border-primary/20 rounded-xl mb-5">
+          <div className="w-8 h-8 rounded-xl bg-primary/15 flex items-center justify-center shrink-0">
+            <Star className="w-4 h-4 text-primary" aria-hidden="true" />
+          </div>
+          <div className="flex-1 min-w-0">
+            <p className="text-sm font-semibold text-foreground">Viewing sample data</p>
+            <p className="text-xs text-muted-foreground">Add your first recruiter contact to track your real network here.</p>
+          </div>
+          <Button size="sm" onClick={openNew} className="shrink-0 h-8 text-xs bg-primary hover:bg-primary/90 rounded-lg px-3 gap-1.5">
+            <Plus className="w-3 h-3" aria-hidden="true" />Add Contact
+          </Button>
+        </div>
+      )}
 
       {/* Stats row */}
       <div className="grid grid-cols-2 lg:grid-cols-4 gap-4 mb-5">

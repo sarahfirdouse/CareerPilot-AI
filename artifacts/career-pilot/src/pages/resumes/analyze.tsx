@@ -8,6 +8,7 @@ import {
   PolarRadiusAxis, ResponsiveContainer, Tooltip, Legend,
 } from "recharts";
 import { useAnalyzeResume } from "@workspace/api-client-react";
+import { toast } from "sonner";
 import { Button } from "@/components/ui/button";
 import { Textarea } from "@/components/ui/textarea";
 import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from "@/components/ui/form";
@@ -316,6 +317,7 @@ export default function ResumeAnalyze() {
         setIsSample(false);
         setFormOpen(false);
       },
+      onError: () => toast.error("Analysis failed — check your inputs and try again"),
     },
   });
 

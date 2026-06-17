@@ -126,16 +126,18 @@ const fadeUp = { hidden: { opacity: 0, y: 16 }, show: { opacity: 1, y: 0, transi
 
 // ─── Main component ───────────────────────────────────────────────────────────
 export default function Analytics() {
-  const { data: stats }     = useGetDashboardStats();
+  const { data: stats, isLoading: statsLoading } = useGetDashboardStats();
   const { data: trends }    = useGetMonthlyTrend();
   const { data: breakdown } = useGetStatusBreakdown();
 
-  const totalApps   = stats?.totalApplications || 127;
-  const interviews  = stats?.interviews || 18;
-  const offers      = stats?.offers || 5;
-  const interviewRate = totalApps > 0 ? (interviews / totalApps) * 100 : 14.2;
-  const offerRate     = interviews > 0 ? (offers / interviews) * 100 : 27.8;
-  const successRate   = totalApps > 0 ? (offers / totalApps) * 100 : 3.9;
+  const isDemo = !statsLoading && (!stats || (stats.totalApplications ?? 0) === 0);
+
+  const totalApps   = stats?.totalApplications ?? 0;
+  const interviews  = stats?.interviews ?? 0;
+  const offers      = stats?.offers ?? 0;
+  const interviewRate = totalApps > 0 ? (interviews / totalApps) * 100 : 0;
+  const offerRate     = interviews > 0 ? (offers / interviews) * 100 : 0;
+  const successRate   = totalApps > 0 ? (offers / totalApps) * 100 : 0;
 
   const chartData = (trends && trends.length > 0) ? trends.map(t => ({ month: t.month.slice(0, 3), count: t.count })) : SAMPLE_MONTHLY;
 
@@ -163,6 +165,22 @@ export default function Analytics() {
           <Link href="/applications">View All Apps <ArrowUpRight className="w-3.5 h-3.5" /></Link>
         </Button>
       </motion.div>
+
+      {/* ── Demo banner ────────────────────────────────────────────── */}
+      {isDemo && (
+        <motion.div variants={fadeUp} className="flex flex-col sm:flex-row items-start sm:items-center gap-3 p-4 bg-primary/6 border border-primary/20 rounded-xl">
+          <div className="w-9 h-9 rounded-xl bg-primary/15 flex items-center justify-center shrink-0">
+            <BarChart3 className="w-4 h-4 text-primary" aria-hidden="true" />
+          </div>
+          <div className="flex-1 min-w-0">
+            <p className="text-sm font-semibold text-foreground">Viewing sample analytics</p>
+            <p className="text-xs text-muted-foreground">Charts show demo data. Track your first application to unlock your real insights.</p>
+          </div>
+          <Button asChild size="sm" className="shrink-0 h-8 text-xs bg-primary hover:bg-primary/90 rounded-lg px-3 gap-1.5">
+            <Link href="/applications"><Send className="w-3 h-3" aria-hidden="true" />Track Application</Link>
+          </Button>
+        </motion.div>
+      )}
 
       {/* ── KPI Cards ──────────────────────────────────────────────── */}
       <div className="grid grid-cols-2 lg:grid-cols-4 gap-4">
