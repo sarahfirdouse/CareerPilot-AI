@@ -77,8 +77,8 @@ function useCountUp(target: number, duration = 1200, delay = 0) {
 const ChartTooltip = ({ active, payload, label }: any) => {
   if (!active || !payload?.length) return null;
   return (
-    <div className="bg-[#0a0a12]/95 backdrop-blur-xl border border-white/10 rounded-xl px-3 py-2 shadow-2xl text-xs">
-      <p className="font-semibold text-white mb-1">{label}</p>
+    <div className="bg-popover/95 backdrop-blur-xl border border-border rounded-xl px-3 py-2 shadow-2xl text-xs">
+      <p className="font-semibold text-popover-foreground mb-1">{label}</p>
       {payload.map((p: any, i: number) => (
         <p key={i} style={{ color: p.color || p.fill }} className="font-bold">{p.value} {p.name === "count" ? "apps" : p.name === "apps" ? "apps" : ""}</p>
       ))}

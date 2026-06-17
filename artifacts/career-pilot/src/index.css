@@ -58,6 +58,9 @@
   --radius-xl: calc(var(--radius) + 4px);
 }
 
+/* ═══════════════════════════════════════════════════════════════
+   DARK THEME  (default / .dark class)
+═══════════════════════════════════════════════════════════════ */
 :root {
   --background: 230 20% 4%;
   --foreground: 220 10% 98%;
@@ -140,6 +143,178 @@
   --sidebar-ring: 250 80% 60%;
 }
 
+/* ═══════════════════════════════════════════════════════════════
+   LIGHT THEME  (.light class on <html>)
+═══════════════════════════════════════════════════════════════ */
+.light {
+  --background:              218 22% 95%;
+  --foreground:              222 47% 10%;
+  --card:                    0 0% 100%;
+  --card-foreground:         222 47% 10%;
+  --card-border:             220 14% 88%;
+  --popover:                 0 0% 100%;
+  --popover-foreground:      222 47% 10%;
+  --popover-border:          220 14% 88%;
+  --primary:                 250 80% 56%;
+  --primary-foreground:      0 0% 100%;
+  --secondary:               220 14% 91%;
+  --secondary-foreground:    222 47% 10%;
+  --muted:                   220 14% 91%;
+  --muted-foreground:        215 20% 48%;
+  --accent:                  220 14% 91%;
+  --accent-foreground:       222 47% 10%;
+  --destructive:             0 84% 54%;
+  --destructive-foreground:  0 0% 100%;
+  --border:                  220 14% 88%;
+  --input:                   220 14% 88%;
+  --ring:                    250 80% 56%;
+
+  --chart-1: 250 80% 56%;
+  --chart-2: 280 80% 56%;
+  --chart-3: 190 75% 44%;
+  --chart-4: 150 70% 38%;
+  --chart-5: 320 80% 56%;
+
+  --sidebar:                    0 0% 100%;
+  --sidebar-foreground:         215 20% 48%;
+  --sidebar-border:             220 14% 88%;
+  --sidebar-primary:            250 80% 56%;
+  --sidebar-primary-foreground: 0 0% 100%;
+  --sidebar-accent:             220 14% 91%;
+  --sidebar-accent-foreground:  222 47% 10%;
+  --sidebar-ring:               250 80% 56%;
+}
+
+/* ─── Light: body background ──────────────────────────────────────────── */
+html.light body {
+  background-image: radial-gradient(circle at 50% 0%, hsl(250 80% 56% / 0.08) 0%, transparent 50%);
+}
+
+/* ─── Light: glass-panel ──────────────────────────────────────────────── */
+html.light .glass-panel {
+  background: rgba(255, 255, 255, 0.80) !important;
+  backdrop-filter: blur(24px) saturate(160%);
+  -webkit-backdrop-filter: blur(24px) saturate(160%);
+  border-color: rgba(0, 0, 0, 0.07) !important;
+  box-shadow: 0 1px 4px rgba(0,0,0,0.04), 0 8px 40px rgba(0,0,0,0.06) !important;
+}
+
+/* ─── Light: Sidebar (desktop) ────────────────────────────────────────── */
+html.light aside {
+  background-color: rgba(255, 255, 255, 0.92) !important;
+  border-right-color: rgba(0, 0, 0, 0.08) !important;
+}
+
+/* ─── Light: Mobile top bar ───────────────────────────────────────────── */
+html.light .mobile-topbar {
+  background-color: rgba(255, 255, 255, 0.90) !important;
+  border-bottom-color: rgba(0, 0, 0, 0.08) !important;
+}
+
+/* ─── Light: text-white in nav / glass-panels → dark foreground ───────── */
+html.light aside .text-white,
+html.light aside span.text-white,
+html.light aside a.text-white,
+html.light .glass-panel .text-white,
+html.light .glass-panel span.text-white,
+html.light .glass-panel p.text-white {
+  color: hsl(222 47% 10%) !important;
+}
+
+/* ─── Light: hover:text-white in nav ─────────────────────────────────── */
+html.light aside .hover\:text-white:hover {
+  color: hsl(222 47% 10%) !important;
+}
+
+/* ─── Light: page headings (plain text-white, excluding gradient clips) ── */
+html.light h1:not(.text-transparent),
+html.light h2:not(.text-transparent) {
+  color: hsl(222 47% 10%);
+}
+
+/* ─── Light: gradient headings (from-white to-white/60) → dark gradient ── */
+html.light h1.bg-clip-text,
+html.light h2.bg-clip-text {
+  background-image: linear-gradient(to right, hsl(222deg 47% 10%), hsl(222deg 30% 32% / 0.65)) !important;
+}
+
+/* ─── Light: large decorative gradient text (e.g. 404 numerals) ─────── */
+html.light span.bg-clip-text.text-transparent,
+html.light span.text-transparent.bg-gradient-to-b {
+  background-image: linear-gradient(to bottom, rgba(0,0,0,0.18) 0%, rgba(0,0,0,0.06) 100%) !important;
+}
+
+/* ─── Light: white opacity bg → inverted dark overlays ───────────────── */
+html.light .bg-white\/3   { background-color: rgba(0,0,0,0.025) !important; }
+html.light .bg-white\/4   { background-color: rgba(0,0,0,0.030) !important; }
+html.light .bg-white\/5   { background-color: rgba(0,0,0,0.035) !important; }
+html.light .bg-white\/6   { background-color: rgba(0,0,0,0.040) !important; }
+html.light .bg-white\/8   { background-color: rgba(0,0,0,0.050) !important; }
+html.light .bg-white\/10  { background-color: rgba(0,0,0,0.060) !important; }
+html.light .bg-white\/15  { background-color: rgba(0,0,0,0.070) !important; }
+
+html.light .hover\:bg-white\/5:hover   { background-color: rgba(0,0,0,0.040) !important; }
+html.light .hover\:bg-white\/8:hover   { background-color: rgba(0,0,0,0.050) !important; }
+html.light .hover\:bg-white\/10:hover  { background-color: rgba(0,0,0,0.060) !important; }
+html.light .hover\:bg-white\/12:hover  { background-color: rgba(0,0,0,0.070) !important; }
+
+/* ─── Light: white borders → dark borders ────────────────────────────── */
+html.light .border-white\/5   { border-color: rgba(0,0,0,0.070) !important; }
+html.light .border-white\/6   { border-color: rgba(0,0,0,0.075) !important; }
+html.light .border-white\/8   { border-color: rgba(0,0,0,0.085) !important; }
+html.light .border-white\/10  { border-color: rgba(0,0,0,0.095) !important; }
+html.light .border-white\/12  { border-color: rgba(0,0,0,0.100) !important; }
+html.light .border-white\/14  { border-color: rgba(0,0,0,0.110) !important; }
+html.light .border-white\/20  { border-color: rgba(0,0,0,0.130) !important; }
+
+html.light .hover\:border-white\/12:hover { border-color: rgba(0,0,0,0.100) !important; }
+html.light .hover\:border-white\/14:hover { border-color: rgba(0,0,0,0.110) !important; }
+html.light .hover\:border-white\/20:hover { border-color: rgba(0,0,0,0.140) !important; }
+
+/* ─── Light: black bg overlays → white/light ─────────────────────────── */
+html.light .bg-black\/20  { background-color: rgba(0,0,0,0.030) !important; }
+html.light .bg-black\/40  { background-color: rgba(255,255,255,0.70) !important; }
+html.light .bg-black\/50  { background-color: rgba(255,255,255,0.80) !important; }
+html.light .bg-black\/60  { background-color: rgba(255,255,255,0.88) !important; }
+html.light .bg-black\/70  { background-color: rgba(0,0,0,0.35) !important; } /* modal backdrop - keep dark */
+html.light .bg-black\/80  { background-color: rgba(255,255,255,0.95) !important; }
+
+/* ─── Light: ring overlays ────────────────────────────────────────────── */
+html.light .ring-white\/10 { --tw-ring-color: rgba(0,0,0,0.10) !important; }
+
+/* ─── Light: Recharts chart grid lines ─────────────────────────────────── */
+html.light .recharts-cartesian-grid-horizontal line,
+html.light .recharts-cartesian-grid-vertical line {
+  stroke: rgba(0, 0, 0, 0.07) !important;
+}
+html.light .recharts-cartesian-axis-line {
+  stroke: rgba(0, 0, 0, 0.12) !important;
+}
+html.light .recharts-rectangle.recharts-tooltip-cursor {
+  fill: rgba(0, 0, 0, 0.04) !important;
+}
+
+/* ─── Light: Recharts / custom chart tooltip wrappers ───────────────────── */
+html.light .recharts-tooltip-wrapper > div {
+  background: rgba(255, 255, 255, 0.97) !important;
+  border-color: rgba(0, 0, 0, 0.10) !important;
+  color: hsl(222 47% 10%) !important;
+}
+html.light .recharts-tooltip-wrapper > div p,
+html.light .recharts-tooltip-wrapper > div span {
+  color: hsl(222 47% 10%) !important;
+}
+
+/* ─── Light: reduce glow intensity ──────────────────────────────────────── */
+html.light [class*="blur-\\[128px\\]"],
+html.light [class*="blur-\\[120px\\]"],
+html.light [class*="blur-\\[80px\\]"] {
+  opacity: 0.45 !important;
+}
+
+/* ═══════════════════════════════════════════════════════════════
+   BASE LAYER
+═══════════════════════════════════════════════════════════════ */
 @layer base {
   * {
     @apply border-border;
@@ -150,10 +325,12 @@
   }
 }
 
+/* ─── Glass panel (dark theme base) ──────────────────────────────────── */
 .glass-panel {
   @apply bg-card/60 backdrop-blur-xl border border-white/5 shadow-2xl;
 }
 
+/* ─── Aurora animations ──────────────────────────────────────────────── */
 @keyframes aurora-drift {
   0%, 100% { transform: translate(0, 0) scale(1); opacity: 0.2; }
   33% { transform: translate(60px, -40px) scale(1.1); opacity: 0.25; }

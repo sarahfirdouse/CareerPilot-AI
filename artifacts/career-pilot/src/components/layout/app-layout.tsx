@@ -119,7 +119,7 @@ export default function AppLayout({ children }: { children: React.ReactNode }) {
     <div className="flex min-h-[100dvh] w-full bg-background selection:bg-primary/30">
 
       {/* ── Mobile top bar ───────────────────────────────────────────── */}
-      <header className="md:hidden fixed top-0 left-0 right-0 h-14 z-30 flex items-center justify-between px-4 border-b border-white/6 bg-black/60 backdrop-blur-xl">
+      <header className="mobile-topbar md:hidden fixed top-0 left-0 right-0 h-14 z-30 flex items-center justify-between px-4 border-b border-white/6 bg-black/60 backdrop-blur-xl">
         <Link href="/dashboard" className="flex items-center gap-2.5">
           <div className="w-7 h-7 rounded-lg bg-primary/20 text-primary ring-1 ring-primary/30 flex items-center justify-center">
             <Briefcase className="h-3.5 w-3.5" />
@@ -158,7 +158,7 @@ export default function AppLayout({ children }: { children: React.ReactNode }) {
               animate={{ x: 0 }}
               exit={{ x: "-100%" }}
               transition={{ type: "spring" as const, stiffness: 320, damping: 32 }}
-              className="fixed inset-y-0 left-0 z-50 w-72 bg-[hsl(230_20%_4%)] border-r border-white/8 md:hidden flex flex-col shadow-2xl"
+              className="fixed inset-y-0 left-0 z-50 w-72 bg-background border-r border-border md:hidden flex flex-col shadow-2xl"
             >
               <NavContent onNavigate={() => setMobileOpen(false)} />
             </motion.aside>
